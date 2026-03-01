@@ -252,6 +252,16 @@ def main():
         show_leave_count=True
     )
 
+    # Combined List 2 & 3
+    combined = sorted(list2 + list3, key=lambda x: x[1]["name"])
+    print(f"\nCombined List 2 & 3: {len(combined)} students")
+    generate_pdf(
+        combined,
+        "List_2_3.pdf",
+        "List 2 & 3",
+        show_leave_count=True
+    )
+
 
 if __name__ == "__main__":
     main()
