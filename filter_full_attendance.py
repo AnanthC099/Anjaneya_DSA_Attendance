@@ -41,7 +41,7 @@ ws.title = "Full Attendance Students"
 
 # Title row
 ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(headers) + 1)
-title_cell = ws.cell(row=1, column=1, value="Students Who Attended All Sessions (36-43)")
+title_cell = ws.cell(row=1, column=1, value="List 1")
 title_cell.font = Font(bold=True, size=14, color="1F4E79")
 title_cell.alignment = Alignment(horizontal="center", vertical="center")
 ws.row_dimensions[1].height = 30
@@ -50,7 +50,7 @@ ws.row_dimensions[1].height = 30
 ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=len(headers) + 1)
 subtitle = ws.cell(
     row=2, column=1,
-    value=f"Yellow = Attended less than 3 hours (< {THRESHOLD_MINUTES} min)  |  Values are in minutes"
+    value=f"Yellow = Attended less than 3 hours (< {THRESHOLD_MINUTES} min)| Values are in minutes"
 )
 subtitle.font = Font(italic=True, size=10, color="996600")
 subtitle.alignment = Alignment(horizontal="center", vertical="center")
@@ -106,12 +106,6 @@ for col_letter_idx in range(3, len(headers) + 2):
 
 # Freeze header
 ws.freeze_panes = "A4"
-
-# Summary at bottom
-summary_row = header_row + len(full_attendance) + 2
-ws.cell(row=summary_row, column=1, value="Summary:").font = Font(bold=True, size=11)
-ws.cell(row=summary_row + 1, column=1, value=f"Total students with full attendance: {len(full_attendance)}").font = Font(size=11)
-ws.cell(row=summary_row + 2, column=1, value=f"Total sessions: {len(session_cols)}").font = Font(size=11)
 
 wb.save(OUTPUT_FILE)
 print(f"Created '{OUTPUT_FILE}' with {len(full_attendance)} students who attended all {len(session_cols)} sessions.")

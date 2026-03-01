@@ -2,7 +2,7 @@ import csv
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import mm
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
@@ -47,7 +47,7 @@ title_style = ParagraphStyle(
     spaceAfter=4,
     alignment=TA_CENTER,
 )
-elements.append(Paragraph("Students Who Attended All Sessions (36-43)", title_style))
+elements.append(Paragraph("List 1", title_style))
 
 # Subtitle
 subtitle_style = ParagraphStyle(
@@ -61,7 +61,7 @@ subtitle_style = ParagraphStyle(
 )
 elements.append(
     Paragraph(
-        f"Yellow = Attended less than 3 hours (&lt; {THRESHOLD_MINUTES} min)  |  Values are in minutes",
+        f"Yellow = Attended less than 3 hours (&lt; {THRESHOLD_MINUTES} min)| Values are in minutes",
         subtitle_style,
     )
 )
@@ -116,14 +116,6 @@ for row_idx, row_data in enumerate(full_attendance, start=1):
 
 table.setStyle(TableStyle(style_commands))
 elements.append(table)
-
-# Summary
-elements.append(Spacer(1, 8 * mm))
-summary_style = ParagraphStyle(
-    "Summary", parent=styles["Normal"], fontSize=10, fontName="Helvetica-Bold"
-)
-elements.append(Paragraph(f"Total students with full attendance: {len(full_attendance)}", summary_style))
-elements.append(Paragraph(f"Total sessions: {len(session_headers)}", summary_style))
 
 doc.build(elements)
 print(f"Created '{OUTPUT_FILE}' with {len(full_attendance)} students.")
