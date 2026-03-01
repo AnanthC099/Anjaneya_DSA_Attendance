@@ -234,19 +234,19 @@ def main():
     generate_pdf(
         list1,
         "List_1.pdf",
-        "Students with Perfect Attendance (All 8 Sessions, >= 3 Sessions over 3 hrs)"
+        "List 1"
     )
 
     generate_pdf(
         list2,
         "List_2.pdf",
-        "Students with Exactly 2 Leaves (>= 3 Sessions over 3 hrs)"
+        "List 2"
     )
 
     generate_pdf(
         list3,
         "List_3.pdf",
-        "Remaining Students"
+        "List 3"
     )
 
 
