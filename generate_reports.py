@@ -124,6 +124,24 @@ def categorize_students(master):
     return list1, list2, list3
 
 
+def filter_students(master):
+    """Filter students with at most 2 absences and >=4 sessions over 3 hrs."""
+    filtered = []
+
+    for email, data in sorted(master.items(), key=lambda x: x[1]["name"]):
+        sessions = data["sessions"]
+
+        attended_sessions = sum(1 for v in sessions.values() if v is not None)
+        absences = len(SESSION_NAMES) - attended_sessions
+
+        sessions_over_3hrs = sum(1 for v in sessions.values() if v is not None and v >= THRESHOLD_MINUTES)
+
+        if absences <= 2 and sessions_over_3hrs >= 4:
+            filtered.append((email, data))
+
+    return filtered
+
+
 class AttendancePDF(FPDF):
     def __init__(self, title):
         super().__init__(orientation="L", unit="mm", format="A4")
@@ -259,6 +277,16 @@ def main():
         combined,
         "List_2_3.pdf",
         "List 2 & 3",
+        show_leave_count=True
+    )
+
+    # Filtered list: at most 2 absences AND >=4 sessions over 3 hrs
+    filtered = filter_students(master)
+    print(f"\nFiltered (<=2 absences, >=4 sessions > 3hrs): {len(filtered)} students")
+    generate_pdf(
+        filtered,
+        "Filtered_List.pdf",
+        "Filtered: <=2 Absences & >=4 Sessions > 3hrs",
         show_leave_count=True
     )
 
