@@ -140,7 +140,7 @@ class AttendancePDF(FPDF):
         self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
 
 
-def generate_pdf(students, filename, title):
+def generate_pdf(students, filename, title, show_leave_count=False):
     """Generate a PDF attendance report."""
     pdf = AttendancePDF(title)
     pdf.alias_nb_pages()
@@ -151,18 +151,22 @@ def generate_pdf(students, filename, title):
     sr_w = 10
     name_w = 55
     session_w = 24
-    total_w = sr_w + name_w + len(SESSION_NAMES) * session_w
+    leave_w = 16
+
+    def draw_table_header():
+        pdf.set_font("Helvetica", "B", 8)
+        pdf.set_fill_color(200, 200, 200)
+        pdf.cell(sr_w, 8, "Sr", border=1, align="C", fill=True)
+        pdf.cell(name_w, 8, "Student Name", border=1, align="C", fill=True)
+        for sn in SESSION_NAMES:
+            short = "S" + sn.split()[-1]
+            pdf.cell(session_w, 8, short, border=1, align="C", fill=True)
+        if show_leave_count:
+            pdf.cell(leave_w, 8, "Leaves", border=1, align="C", fill=True)
+        pdf.ln()
 
     # Table header
-    pdf.set_font("Helvetica", "B", 8)
-    pdf.set_fill_color(200, 200, 200)
-    pdf.cell(sr_w, 8, "Sr", border=1, align="C", fill=True)
-    pdf.cell(name_w, 8, "Student Name", border=1, align="C", fill=True)
-    for sn in SESSION_NAMES:
-        # Show as "S36", "S37" etc.
-        short = "S" + sn.split()[-1]
-        pdf.cell(session_w, 8, short, border=1, align="C", fill=True)
-    pdf.ln()
+    draw_table_header()
 
     # Data rows
     pdf.set_font("Helvetica", "", 7)
@@ -175,15 +179,7 @@ def generate_pdf(students, filename, title):
         # Check if we need a new page
         if pdf.get_y() + row_h > pdf.h - 20:
             pdf.add_page()
-            # Re-draw header
-            pdf.set_font("Helvetica", "B", 8)
-            pdf.set_fill_color(200, 200, 200)
-            pdf.cell(sr_w, 8, "Sr", border=1, align="C", fill=True)
-            pdf.cell(name_w, 8, "Student Name", border=1, align="C", fill=True)
-            for sn in SESSION_NAMES:
-                short = "S" + sn.split()[-1]
-                pdf.cell(session_w, 8, short, border=1, align="C", fill=True)
-            pdf.ln()
+            draw_table_header()
             pdf.set_font("Helvetica", "", 7)
 
         # Sr No
@@ -208,6 +204,12 @@ def generate_pdf(students, filename, title):
                 else:
                     pdf.set_fill_color(255, 255, 255)
                     pdf.cell(session_w, row_h, str(duration), border=1, align="C")
+
+        # Leave count column
+        if show_leave_count:
+            absences = sum(1 for v in sessions.values() if v is None)
+            pdf.set_fill_color(255, 255, 255)
+            pdf.cell(leave_w, row_h, str(absences), border=1, align="C")
 
         pdf.ln()
 
@@ -246,7 +248,8 @@ def main():
     generate_pdf(
         list3,
         "List_3.pdf",
-        "List 3"
+        "List 3",
+        show_leave_count=True
     )
 
 
